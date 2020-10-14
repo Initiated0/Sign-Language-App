@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <title>ASL Sign Language</title>
+    <style>
+      .button {
+        display: inline-block;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        color: #ffffff;
+        background-color: #7aa8b7;
+        border-radius: 6px;
+        outline: none;
+      }
+    </style>
+  </head>
+  <body>
+  	<h1>Streaming </h1>
+      <div>
+         <!-- <img src="{{ url_for('video_feed') }}"> -->
+          <a class="button" href="{{url_for('index')}}">Capture a Sign</a>
+
+      </div>
+
+   <!-- <a class="button" href="{{url_for('video_feed')}}">Capture a Sign</a>-->
+   <!-- <img src="{{ url_for('video_feed') }}"> -->
+  </body>
+</html>
