@@ -26,21 +26,33 @@ def preprocess_image(image):
     return image
 
 class VideoCamera(object):
-    f = open("output.txt", "w")
+    f = open("flaskblog/output.txt", "w")  #root is at run.py
+    data = ""
     prev_letter = ""
     def __init__(self):
-        self.video = cv2.VideoCapture('Sample2.MP4')
+        self.video = cv2.VideoCapture(0)
 
     def __del__(self):
         self.video.release()
+    def openfile(self):
+        self.f = open("flaskblog/output.txt", "w")#root is at run.py
+    def closefile(self):
+        self.f.close()
+    def givedata(self):
+        return self.data
 
 
     def get_frame(self):
         ret, img = self.video.read()
+        
+        cv2.rectangle(img, (250, 270), (50, 70), (255, 0, 0), 2)  # bottom right , top left + BGR
+        crop_img = img[70:270, 50:250]  # first = y-axis, x-axis
+        
+
         font = cv2.FONT_HERSHEY_SIMPLEX
         # DO WHAT YOU WANT WITH TENSORFLOW / KERAS AND OPENCV
         if ret == True:
-            img2 = cv2.resize(img, dsize=(64, 64))
+            img2 = cv2.resize(crop_img, dsize=(64, 64))
 
             preprocessed_image = preprocess_image(img2)
 
@@ -53,19 +65,30 @@ class VideoCamera(object):
             val = list(labels_dict.values())
             x = key[val.index(x)]
 
-            if x != self.prev_letter:
-                if x == 'nothing':
+            # if x != self.prev_letter:
+            #     if x == 'nothing' or x == 'space':
+            #         self.f.write(' ')
+            #     else:
+            #         self.f.write(x)
+            #     self.prev_letter = x
+
+            if x == 'nothing':
+                if self.prev_letter == 'space':
                     self.f.write(' ')
-                else:
-                    self.f.write(x)
-                self.prev_letter = x
-            cv2.putText(img, x, (100, 100), font, 1, (255, 255, 0), 2)
-            cv2.rectangle(img, (300,300),(50,50),(255,0,0),2)
+                    self.data = self.data + " "
+                elif self.prev_letter != 'nothing' and self.prev_letter != 'del':
+                    self.f.write(self.prev_letter)
+                    self.data = self.data + self.prev_letter
+                   # print("camera.py data : ", self.data)
+            self.prev_letter = x
+
+            cv2.putText(img, x, (100, 100), font, 1, (0, 0, 255), 2)
+            #cv2.rectangle(img, (300,300),(50,50),(255,0,0),2)
 
             ret, jpeg = cv2.imencode('.jpg', img)
             return jpeg.tobytes()
         else:
-            self.f.close()
+            #self.f.close()
             return None
 
 
